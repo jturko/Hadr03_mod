@@ -369,7 +369,29 @@ void Run::EndOfRun(G4bool print)
  G4cout << "\n List of nuclear reactions: \n" << G4endl; 
  std::map<G4String,NuclChannel>::iterator ic;               
  for (ic = fNuclChannelMap.begin(); ic != fNuclChannelMap.end(); ic++) { 
-    G4String name    = ic->first;
+    G4String name    = ic->first; if(fNuclChannelProcNameMap[name] != "hadElastic") continue;
+    NuclChannel data = ic->second;
+    G4int count = data.fCount;
+    G4double Q  = data.fQ/count; 
+    if (print)         
+      G4cout << "  " << std::setw(50) << name << " (" << fNuclChannelProcNameMap[name] << ") : " << std::setw(7) << count
+             << "   Q = " << std::setw(wid) << G4BestUnit(Q, "Energy")
+             << G4endl;           
+ }
+ G4cout << " \n ========================================================================================== \n";
+ for (ic = fNuclChannelMap.begin(); ic != fNuclChannelMap.end(); ic++) { 
+    G4String name    = ic->first; if(fNuclChannelProcNameMap[name] != "neutronInelastic") continue;
+    NuclChannel data = ic->second;
+    G4int count = data.fCount;
+    G4double Q  = data.fQ/count; 
+    if (print)         
+      G4cout << "  " << std::setw(50) << name << " (" << fNuclChannelProcNameMap[name] << ") : " << std::setw(7) << count
+             << "   Q = " << std::setw(wid) << G4BestUnit(Q, "Energy")
+             << G4endl;           
+ } 
+ G4cout << " \n ========================================================================================== \n";
+ for (ic = fNuclChannelMap.begin(); ic != fNuclChannelMap.end(); ic++) { 
+    G4String name    = ic->first; if(fNuclChannelProcNameMap[name] != "nCapture") continue;
     NuclChannel data = ic->second;
     G4int count = data.fCount;
     G4double Q  = data.fQ/count; 
