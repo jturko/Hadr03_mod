@@ -86,6 +86,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   G4String partName = particle->GetParticleName();
   G4String nuclearChannel = partName;
   G4HadronicProcess* hproc = dynamic_cast<G4HadronicProcess*>(process);
+  G4String hproc_name = hproc->GetProcessName(); 
   const G4Isotope* target = NULL;
   if (hproc) target = hproc->GetTargetIsotope();
   G4String targetName = "XXXX";  
@@ -143,8 +144,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   }
   
   if(fParticleFlag[G4Neutron::Neutron()] == 2 && fParticleFlag[G4Proton::Proton()] == 1) {
-    //G4cout << "found a deuteron breakup!  Q = " << Q << " MeV" << G4endl;
     analysis->FillH1(13,Q);
+  }
+  else {
+    analysis->FillH1(14,Q);
   }
 
   //energy-momentum balance
@@ -173,7 +176,15 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     if (ip != fParticleFlag.begin()) nuclearChannel += " + ";
     nuclearChannel += Nb + name;
   }
- 
+  
+  run->RegisterProcessType(nuclearChannel,hproc_name);
+  //std::map<G4String,G4String>::iterator it = run->GetNuclChannelProcNameMap().find(nuclearChannel);
+  //if(run->GetNuclChannelProcNameMap().find(nuclearChannel) == run->GetNuclChannelProcNameMap().end()) { 
+  //  G4cout << "nuclear channel = " << nuclearChannel << "\t process = " << hproc_name << G4endl;
+  //  run->GetNuclChannelProcNameMap()[nuclearChannel] = hproc_name;
+  //  run->GetNuclChannelProcNameMap().insert( std::pair<G4String,G4String>(nuclearChannel,hproc_name) );
+  //} 
+
   ///G4cout << "\n nuclear channel: " << nuclearChannel << G4endl;
   run->CountNuclearChannel(nuclearChannel, Q);
     

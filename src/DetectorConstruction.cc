@@ -166,9 +166,9 @@ void DetectorConstruction::SetMaterial(G4String materialChoice)
     G4double z, a, fractionmass, density;
     G4int ncomponents;
 
-    G4Element* elH1 = new G4Element(name="Protium", symbol="H1", z=1., a = 1.01*g/mole);
-    G4Isotope* isoH2 = new G4Isotope("H2_iso", 1, 2, a = 2.02*g/mole);
-    G4Element* elH2 = new G4Element(name="Deuterium",symbol="H2",ncomponents=1);
+    G4Element* elH1 = new G4Element(name="Protium", symbol="H", z=1., a = 1.01*g/mole);
+    G4Isotope* isoH2 = new G4Isotope("H2_isotope", 1, 2, a = 2.02*g/mole);
+    G4Element* elH2 = new G4Element(name="Deuterium",symbol="H",ncomponents=1);
     elH2->AddIsotope(isoH2,fractionmass=100.*perCent);
     G4Element* elC = new G4Element(name="Carbon-12", symbol="C", z=6., a = 12.01*g/mole);
 

@@ -41,6 +41,9 @@
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
+#include "G4String.hh"
+#include <string>
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 Run::Run(DetectorConstruction* det)
@@ -59,6 +62,13 @@ Run::~Run()
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void Run::RegisterProcessType(std::string pname, std::string ptype) {
+  std::map<std::string,std::string>::iterator it = fNuclChannelProcNameMap.find(pname);
+  if(it == fNuclChannelProcNameMap.end()) fNuclChannelProcNameMap[pname] = ptype;
+}
+
+
 
 void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
 { 
@@ -169,6 +179,18 @@ void Run::Merge(const G4Run* run)
   fSumTrack += localRun->fSumTrack;
   fSumTrack2 += localRun->fSumTrack2;    
 
+  // map: processes name to type
+  std::map<std::string,std::string>::const_iterator iter;
+  for( iter =  localRun->fNuclChannelProcNameMap.begin();
+       iter != localRun->fNuclChannelProcNameMap.end();
+       iter++ ) {
+    std::string pname = iter->first;
+    std::string ptype = iter->second;
+    if( fNuclChannelProcNameMap.find(pname) == fNuclChannelProcNameMap.end() ) {
+      fNuclChannelProcNameMap[pname] = ptype;
+    }
+
+  }
   
   //map: processes count
   std::map<G4String,G4int>::const_iterator itp;
@@ -352,11 +374,11 @@ void Run::EndOfRun(G4bool print)
     G4int count = data.fCount;
     G4double Q  = data.fQ/count; 
     if (print)         
-      G4cout << "  " << std::setw(50) << name << ": " << std::setw(7) << count
+      G4cout << "  " << std::setw(50) << name << " (" << fNuclChannelProcNameMap[name] << ") : " << std::setw(7) << count
              << "   Q = " << std::setw(wid) << G4BestUnit(Q, "Energy")
              << G4endl;           
  } 
- 
+
  //Gamma count
  //
  if (print && (fGammaCount > 0)) {       
