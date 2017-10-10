@@ -62,25 +62,28 @@ void HistoManager::Book()
   analysisManager->SetActivation(true);     //enable inactivation of histograms
   
   // Define histograms start values
-  const G4int kMaxHisto = 15;
+  const G4int kMaxHisto = 18;
   const G4String id[] = {"0","1","2","3","4","5","6","7","8","9",
-                         "10","11","12","13","14"};
+                         "10","11","12","13","14","15","16","17"};
   const G4String title[] = 
-                { "dummy",                                          //0
-                  "kinetic energy of scattered primary particle",   //1
-                  "kinetic energy of gamma",                        //2
-                  "kinetic energy of neutrons",                     //3
-                  "kinetic energy of protons",                      //4
-                  "kinetic energy of deuterons",                    //5
-                  "kinetic energy of alphas",                       //6
-                  "kinetic energy of nuclei",                       //7
-                  "kinetic energy of mesons",                       //8
-                  "kinetic energy of baryons",                      //9
-                  "Q = Ekin out - Ekin in",                         //10
-                  "Pbalance = mag(P_out - P_in)",                   //11
-                  "atomic mass of nuclei"                           //12
-                  "Q values for deuteron breakup",                  //13
-                  "Q values for non-deuteron breakup",              //14
+                { "dummy",                                          // 0
+                  "kinetic energy of scattered primary particle",   // 1
+                  "kinetic energy of gamma",                        // 2
+                  "kinetic energy of neutrons",                     // 3
+                  "kinetic energy of protons",                      // 4
+                  "kinetic energy of deuterons",                    // 5
+                  "kinetic energy of alphas",                       // 6
+                  "kinetic energy of nuclei",                       // 7
+                  "kinetic energy of mesons",                       // 8
+                  "kinetic energy of baryons",                      // 9
+                  "Q = Ekin out - Ekin in",                         // 10
+                  "Pbalance = mag(P_out - P_in)",                   // 11
+                  "atomic mass of nuclei",                          // 12
+                  "Q values for deuteron breakup",                  // 13
+                  "Q values for non-deuteron breakup (inealstic)",  // 14
+                  "Q values for non-deuteron breakup (elastic)",    // 15
+                  "Q values for elastic reactions",                 // 16
+                  "Q values for inelastic reactions"                // 17
                  };  
 
   // Default values (to be reset via /analysis/h1/set command)               

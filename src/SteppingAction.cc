@@ -146,8 +146,18 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   if(fParticleFlag[G4Neutron::Neutron()] == 2 && fParticleFlag[G4Proton::Proton()] == 1) {
     analysis->FillH1(13,Q);
   }
-  else {
+  else if(hproc_name == "neutronInelastic" || hproc_name == "nCapture") {
     analysis->FillH1(14,Q);
+  }
+  else {
+    analysis->FillH1(15,Q);
+  }
+
+  if(hproc_name == "hadElastic") {
+    analysis->FillH1(16,Q);
+  }
+  else {
+    analysis->FillH1(17,Q);
   }
 
   //energy-momentum balance
@@ -160,7 +170,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   
   // nuclear channel
   const G4int kMax = 16;  
-  const G4String conver[] = {"0","","2 ","3 ","4 ","5 ","6 ","7 ","8 ","9 ",
+  const G4String conver[] = {"0 ","","2 ","3 ","4 ","5 ","6 ","7 ","8 ","9 ",
                              "10 ","11 ","12 ","13 ","14 ","15 ","16 "};
   std::map<G4ParticleDefinition*,G4int>::iterator ip;               
   for (ip = fParticleFlag.begin(); ip != fParticleFlag.end(); ip++) {
