@@ -2,7 +2,7 @@
 void Plot(double energy = 10, int rebin = -1, bool draw = true)
 {
 
-    TFile* file = TFile::Open(Form("neutron_%.1fMeV.root",energy));
+    TFile* file = TFile::Open(Form("neutron_%.0fMeV.root",energy));
     
     TH1F* breakup = (TH1F*)file->Get("13");
     TH1F* non_breakup = (TH1F*)file->Get("14");
@@ -66,12 +66,19 @@ void Plot(double energy = 10, int rebin = -1, bool draw = true)
 
 }
 
-void PlotAll(int rebin = -1, bool draw = false)
+void Calculate(int rebin = -1, bool draw = false, double * bad_events = NULL)
 {
-    
-    Plot(2.5,rebin,draw);
-    Plot(5  ,rebin,draw);
-    Plot(7.5,rebin,draw);
-    Plot(10 ,rebin,draw);
+
+    Plot(1,rebin,draw);
+    Plot(2,rebin,draw);
+    Plot(3,rebin,draw);
+    Plot(4,rebin,draw);
+    Plot(5,rebin,draw);
+    Plot(6,rebin,draw);
+    Plot(7,rebin,draw);
+    Plot(8,rebin,draw);
+    Plot(9,rebin,draw);
+    Plot(10,rebin,draw);
+
 
 }
