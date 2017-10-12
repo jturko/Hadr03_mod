@@ -1,8 +1,8 @@
 
-double * Plot(double energy = 10, int rebin = -1, bool draw = true)
+double * Plot(double energy = 10, int rebin = -1, double Qval = -2.225, bool draw = true)
 {
 
-    TFile* file = TFile::Open(Form("neutron_%.1fMeV.root",energy));
+    TFile* file = TFile::Open(Form("data/neutron_%.1fMeV.root",energy));
     
     TH1F* breakup = (TH1F*)file->Get("13");
     TH1F* non_breakup = (TH1F*)file->Get("14");
@@ -27,7 +27,11 @@ double * Plot(double energy = 10, int rebin = -1, bool draw = true)
         gROOT->SetBatch(kTRUE);
     }
 
-    TCanvas * c1 = new TCanvas();
+    //TCanvas * c1 = new TCanvas();
+    TCanvas * c1 = NULL;    
+    if(gROOT->GetListOfCanvases()->GetSize() < 1) c1 = new TCanvas();   
+    else                                          c1 = (TCanvas*)gROOT->GetListOfCanvases()->At(0);
+    c1->cd();
     breakup->SetStats(0);
     breakup->Draw("h");
     non_breakup->Draw("h same");
@@ -39,7 +43,11 @@ double * Plot(double energy = 10, int rebin = -1, bool draw = true)
     l1->AddEntry(non_breakup_el,"non deuteron breakup (el)","l");
     l1->Draw("same");
 
-    TCanvas* c2 = new TCanvas();
+    //TCanvas* c2 = new TCanvas();
+    TCanvas * c2 = NULL;    
+    if(gROOT->GetListOfCanvases()->GetSize() < 2) c2 = new TCanvas();   
+    else                                          c2 = (TCanvas*)gROOT->GetListOfCanvases()->At(1);
+    c2->cd();
     el->SetStats(0);
     el->Draw("h");
     nonel->Draw("h same");
@@ -50,40 +58,52 @@ double * Plot(double energy = 10, int rebin = -1, bool draw = true)
     l2->Draw("same");
 
     double counts = el->GetEntries() + nonel->GetEntries();
+    double Q = Qval;
 
-    //std::cout << " Neutron Energy = " << energy << " MeV " << "\n";
-    //std::cout << " Counts: \n";
-    //std::cout << " deuteron breakup : " << breakup->GetEntries() << "\t\t\t / total = " << double(breakup->GetEntries())/counts << "\n";
-    //std::cout << " non - deuteron breakup (inel) : " << non_breakup->GetEntries() << "\t / total = " << double(non_breakup->GetEntries())/counts << "\n";
-    //std::cout << " non - deuteron breakup (el) : " << non_breakup_el->GetEntries() << "\t / total = " << double(non_breakup_el->GetEntries())/counts << "\n";
-    //std::cout << "\t breakup reactions w/ Q == -2.224 MeV : " << breakup->GetBinContent(breakup->FindBin(-2.224)) << " \t / all breakup = " << double(breakup->GetBinContent(breakup->FindBin(-2.224)))/breakup->GetEntries() << "\t / total = " << double(breakup->GetBinContent(breakup->FindBin(-2.224)))/counts;    
-    //std::cout << "\n\t breakup reactions w/ Q != -2.224 MeV : " << breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)) << " \t / all breakup = " << double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)))/breakup->GetEntries() << "\t / total = " << double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)))/counts << "\n";    
+    if(draw) {
+        std::cout << " Neutron Energy = " << energy << " MeV \t Bin width = " << breakup->GetBinWidth(0)*1000. << " keV";
+        std::cout << " (from " << breakup->GetBinLowEdge(breakup->FindBin(Q))*1000. << " to " 
+                  << (breakup->GetBinLowEdge(breakup->FindBin(Q))+breakup->GetBinWidth(0))*1000. << " keV)\n"; 
+        std::cout << " Counts: \n";
+        std::cout << " deuteron breakup : " << breakup->GetEntries() << "\t\t\t / total = " 
+                  << double(breakup->GetEntries())/counts << "\n";
+        std::cout << " non - deuteron breakup (inel) : " << non_breakup->GetEntries() << "\t / total = " 
+                  << double(non_breakup->GetEntries())/counts << "\n";
+        std::cout << " non - deuteron breakup (el) : " << non_breakup_el->GetEntries() << "\t / total = " 
+                  << double(non_breakup_el->GetEntries())/counts << "\n";
+        std::cout << "\t breakup reactions w/ Q == " << Q << " MeV : " << breakup->GetBinContent(breakup->FindBin(Q)) 
+                  << " \t / all breakup = " << double(breakup->GetBinContent(breakup->FindBin(Q)))/breakup->GetEntries() 
+                  << "\t / total = " << double(breakup->GetBinContent(breakup->FindBin(Q)))/counts;    
+        std::cout << "\n\t breakup reactions w/ Q != " << Q << " MeV : " 
+                  << breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)) << " \t / all breakup = " 
+                  << double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)))/breakup->GetEntries() 
+                  << "\t / total = " << double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)))/counts << "\n";    
+        std::cout << " elastic : " << el->GetEntries()   << "\t\t / total = " << double(el->GetEntries())/counts << "\n";
+        std::cout << " inelastic : " << nonel->GetEntries() << "\t / total = " << double(nonel->GetEntries())/counts << "\n\n";
+    }        
 
-    //std::cout << " elastic : " << el->GetEntries()   << "\t\t / total = " << double(el->GetEntries())/counts << "\n";
-    //std::cout << " inelastic : " << nonel->GetEntries() << "\t / total = " << double(nonel->GetEntries())/counts << "\n\n";
-        
     gROOT->SetBatch(kFALSE);
     
     double * ratios = new double[5];
     //ratios[0] = double(breakup->GetEntries())/counts; // fraction that are d-breakup
     //ratios[1] = double(non_breakup->GetEntries())/counts; // fraction that are NOT d-breakup, inelastic
     //ratios[2] = double(non_breakup_el->GetEntries())/counts; // fraction that are NOT d-breakup, elastic
-    //ratios[3] = double(breakup->GetBinContent(breakup->FindBin(-2.224)))/breakup->GetEntries(); // fraction of d-breakup that conserve E
-    //ratios[4] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)))/breakup->GetEntries(); // fraction of d-breakup that DONT conserve E
-    //ratios[3] = double(breakup->GetBinContent(breakup->FindBin(-2.224)))/counts; // fraction of total that are d-breakup that DO conserve E
-    //ratios[6] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)))/counts; // fraction of total that are d-breakup that DO NOT conserve E
+    //ratios[3] = double(breakup->GetBinContent(breakup->FindBin(Q)))/breakup->GetEntries(); // fraction of d-breakup that conserve E
+    //ratios[4] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)))/breakup->GetEntries(); // fraction of d-breakup that DONT conserve E
+    //ratios[3] = double(breakup->GetBinContent(breakup->FindBin(Q)))/counts; // fraction of total that are d-breakup that DO conserve E
+    //ratios[6] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)))/counts; // fraction of total that are d-breakup that DO NOT conserve E
     
     ratios[0] = double(breakup->GetEntries())/counts; // fraction that are d-breakup
-    ratios[1] = double(breakup->GetBinContent(breakup->FindBin(-2.224)))/breakup->GetEntries(); // fraction of d-breakup that conserve E
-    ratios[2] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)))/breakup->GetEntries(); // fraction of d-breakup that DONT conserve E
-    ratios[3] = double(breakup->GetBinContent(breakup->FindBin(-2.224)))/counts; // fraction of total that are d-breakup that DO conserve E
-    ratios[4] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(-2.224)))/counts; // fraction of total that are d-breakup that DO NOT conserve E
+    ratios[1] = double(breakup->GetBinContent(breakup->FindBin(Q)))/breakup->GetEntries(); // fraction of d-breakup that conserve E
+    ratios[2] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)))/breakup->GetEntries(); // fraction of d-breakup that DONT conserve E
+    ratios[3] = double(breakup->GetBinContent(breakup->FindBin(Q)))/counts; // fraction of total that are d-breakup that DO conserve E
+    ratios[4] = double(breakup->GetEntries()-breakup->GetBinContent(breakup->FindBin(Q)))/counts; // fraction of total that are d-breakup that DO NOT conserve E
 
     return ratios;
 
 }
 
-TGraph ** Calculate(int rebin = -1, bool draw = false)
+TGraph ** Calculate(int rebin = -1, double Q = -2.225, bool draw = false)
 {
     
     //TGraph * all_dbreak = new Graph();
@@ -99,9 +119,9 @@ TGraph ** Calculate(int rebin = -1, bool draw = false)
     
     double * data;
     double E;
-    for(int i=0; i<100; i++) {
+    for(int i=0; i<199; i++) {
         E = (i+1)*0.1;
-        data = Plot(E,rebin,draw);
+        data = Plot(E,rebin,Q,draw);
         for(int j=0; j<5; j++) {
             if(data[j] == data[j]) { 
                 graphs[j]->SetPoint(i,E,data[j]);
@@ -115,11 +135,22 @@ TGraph ** Calculate(int rebin = -1, bool draw = false)
     return graphs;
 }
 
-void PlotGraphs(int rebin = -1, bool draw = false) 
+void PlotGraphs(int rebin = -1, double Q = -2.225, bool draw = false) 
 {
+    TFile * f = TFile::Open("data/neutron_0.1MeV.root");
+    TH1F * tmp = (TH1F*)f->Get("13");
+    if(rebin > 0) tmp->Rebin(rebin);
+    double binWidth = tmp->GetBinWidth(0);
+    std::cout << "bin witdh = " << 1000.*binWidth << " keV\n";
+
     gROOT->SetBatch(kFALSE);
-    TGraph ** graphs = Calculate(rebin,draw);
-    TCanvas * c1 = new TCanvas("c1");
+    TGraph ** graphs = Calculate(rebin,Q,draw);
+    //TCanvas * c1 = new TCanvas("c1");
+    TCanvas * c1 = NULL;    
+    if(gROOT->GetListOfCanvases()->GetSize() < 1) c1 = new TCanvas();   
+    else                                          c1 = (TCanvas*)gROOT->GetListOfCanvases()->At(0);
+    c1->cd();
+    gPad->SetLogy(false);
     graphs[0]->SetMarkerStyle(20);
     graphs[3]->SetMarkerStyle(21);
     graphs[4]->SetMarkerStyle(22);
@@ -131,14 +162,30 @@ void PlotGraphs(int rebin = -1, bool draw = false)
     graphs[3]->Draw("same l");
     graphs[4]->Draw("same l");
 
-    TCanvas * c2 = new TCanvas("c2");
+    TLegend * l1 = new TLegend(0.11,0.7,0.5,0.89);
+    l1->AddEntry(graphs[0],"d breakup (total)","l");
+    l1->AddEntry(graphs[3],"d breakup (good)","l");
+    l1->AddEntry(graphs[4],"d breakup (bad)","l");
+    l1->Draw("same");
+
+    //TCanvas * c2 = new TCanvas("c2");
+    TCanvas * c2 = NULL;    
+    if(gROOT->GetListOfCanvases()->GetSize() < 2) c2 = new TCanvas();   
+    else                                          c2 = (TCanvas*)gROOT->GetListOfCanvases()->At(1);
+    c2->cd();
+    gPad->SetLogy(false);
     graphs[1]->SetMarkerStyle(20);
     graphs[2]->SetMarkerStyle(21);
     graphs[1]->SetMarkerColor(1);
     graphs[2]->SetMarkerColor(2);
     graphs[1]->SetLineColor(1);
     graphs[2]->SetLineColor(2);
+    graphs[2]->GetYaxis()->SetRangeUser(0,1.05);
     graphs[2]->Draw("a l");
     graphs[1]->Draw("l same");
-
+    
+    TLegend * l2 = new TLegend(0.11,0.7,0.5,0.89);
+    l2->AddEntry(graphs[1],"d breakup (good)","l");
+    l2->AddEntry(graphs[2],"d breakup (bad)","l");
+    l2->Draw("same");
 }
