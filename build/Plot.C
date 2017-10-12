@@ -61,9 +61,9 @@ double * Plot(double energy = 10, int rebin = -1, double Qval = -2.225, bool dra
     double Q = Qval;
 
     if(draw) {
-        std::cout << " Neutron Energy = " << energy << " MeV \t Bin width = " << breakup->GetBinWidth(0)*1000. << " keV";
-        std::cout << " (from " << breakup->GetBinLowEdge(breakup->FindBin(Q))*1000. << " to " 
-                  << (breakup->GetBinLowEdge(breakup->FindBin(Q))+breakup->GetBinWidth(0))*1000. << " keV)\n"; 
+        std::cout << " Neutron Energy = " << energy << " MeV \t Bin width = " << breakup->GetBinWidth(0) << " MeV";
+        std::cout << " (from " << breakup->GetBinLowEdge(breakup->FindBin(Q)) << " to " 
+                  << (breakup->GetBinLowEdge(breakup->FindBin(Q))+breakup->GetBinWidth(0)) << " MeV)\n"; 
         std::cout << " Counts: \n";
         std::cout << " deuteron breakup : " << breakup->GetEntries() << "\t\t\t / total = " 
                   << double(breakup->GetEntries())/counts << "\n";
@@ -141,7 +141,8 @@ void PlotGraphs(int rebin = -1, double Q = -2.225, bool draw = false)
     TH1F * tmp = (TH1F*)f->Get("13");
     if(rebin > 0) tmp->Rebin(rebin);
     double binWidth = tmp->GetBinWidth(0);
-    std::cout << "bin witdh = " << 1000.*binWidth << " keV\n";
+    double lowEdge = tmp->GetBinLowEdge(tmp->FindBin(Q));
+    std::cout << "bin witdh = " << binWidth << " MeV (from " << lowEdge << " to " << (lowEdge+binWidth) << " MeV)\n";
 
     gROOT->SetBatch(kFALSE);
     TGraph ** graphs = Calculate(rebin,Q,draw);
@@ -176,15 +177,15 @@ void PlotGraphs(int rebin = -1, double Q = -2.225, bool draw = false)
     gPad->SetLogy(false);
     graphs[1]->SetMarkerStyle(20);
     graphs[2]->SetMarkerStyle(21);
-    graphs[1]->SetMarkerColor(1);
-    graphs[2]->SetMarkerColor(2);
-    graphs[1]->SetLineColor(1);
-    graphs[2]->SetLineColor(2);
+    graphs[1]->SetMarkerColor(2);
+    graphs[2]->SetMarkerColor(3);
+    graphs[1]->SetLineColor(2);
+    graphs[2]->SetLineColor(3);
     graphs[2]->GetYaxis()->SetRangeUser(0,1.05);
     graphs[2]->Draw("a l");
     graphs[1]->Draw("l same");
     
-    TLegend * l2 = new TLegend(0.11,0.7,0.5,0.89);
+    TLegend * l2 = new TLegend(0.5,0.7,0.89,0.89);
     l2->AddEntry(graphs[1],"d breakup (good)","l");
     l2->AddEntry(graphs[2],"d breakup (bad)","l");
     l2->Draw("same");
