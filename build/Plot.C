@@ -2,7 +2,7 @@
 double * Plot(double energy = 10, int rebin = -1, bool draw = true)
 {
 
-    TFile* file = TFile::Open(Form("neutron_%.1fMeV",energy));
+    TFile* file = TFile::Open(Form("neutron_%.1fMeV.root",energy));
     
     TH1F* breakup = (TH1F*)file->Get("13");
     TH1F* non_breakup = (TH1F*)file->Get("14");
@@ -99,8 +99,8 @@ TGraph ** Calculate(int rebin = -1, bool draw = false)
     
     double * data;
     double E;
-    for(int i=0; i<20; i++) {
-        E = (i+1)*0.5;
+    for(int i=0; i<100; i++) {
+        E = (i+1)*0.1;
         data = Plot(E,rebin,draw);
         for(int j=0; j<5; j++) {
             if(data[j] == data[j]) { 
@@ -115,10 +115,10 @@ TGraph ** Calculate(int rebin = -1, bool draw = false)
     return graphs;
 }
 
-void PlotGraphs(bool draw = false) 
+void PlotGraphs(int rebin = -1, bool draw = false) 
 {
     gROOT->SetBatch(kFALSE);
-    TGraph ** graphs = Calculate(-1,draw);
+    TGraph ** graphs = Calculate(rebin,draw);
     TCanvas * c1 = new TCanvas("c1");
     graphs[0]->SetMarkerStyle(20);
     graphs[3]->SetMarkerStyle(21);
@@ -127,11 +127,9 @@ void PlotGraphs(bool draw = false)
     graphs[4]->SetMarkerColor(3);
     graphs[3]->SetLineColor(2);
     graphs[4]->SetLineColor(3);
-    graphs[0]->Draw("a p l");
-    graphs[3]->Draw("same p l");
-    graphs[4]->Draw("same p l");
-
-
+    graphs[0]->Draw("a l");
+    graphs[3]->Draw("same l");
+    graphs[4]->Draw("same l");
 
     TCanvas * c2 = new TCanvas("c2");
     graphs[1]->SetMarkerStyle(20);
@@ -140,7 +138,7 @@ void PlotGraphs(bool draw = false)
     graphs[2]->SetMarkerColor(2);
     graphs[1]->SetLineColor(1);
     graphs[2]->SetLineColor(2);
-    graphs[2]->Draw("a p l");
-    graphs[1]->Draw("p l same");
+    graphs[2]->Draw("a l");
+    graphs[1]->Draw("l same");
 
 }
