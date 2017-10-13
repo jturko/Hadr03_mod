@@ -1,5 +1,5 @@
 
-double * Plot(double energy = 10, int rebin = -1, double Qval = -2.225, bool draw = true)
+double * Plot(double energy = 10, int rebin = -1, double Qval = -2.22435, bool draw = true)
 {
 
     TFile* file = TFile::Open(Form("data/neutron_%.1fMeV.root",energy));
@@ -103,7 +103,7 @@ double * Plot(double energy = 10, int rebin = -1, double Qval = -2.225, bool dra
 
 }
 
-TGraph ** Calculate(int rebin = -1, double Q = -2.225, bool draw = false)
+TGraph ** Calculate(int rebin = -1, double Q = -2.22435, bool draw = false)
 {
     
     //TGraph * all_dbreak = new Graph();
@@ -135,7 +135,7 @@ TGraph ** Calculate(int rebin = -1, double Q = -2.225, bool draw = false)
     return graphs;
 }
 
-void PlotGraphs(int rebin = -1, double Q = -2.225, bool draw = false) 
+void PlotGraphs(int rebin = -1, double Q = -2.22435, bool draw = false) 
 {
     TFile * f = TFile::Open("data/neutron_0.1MeV.root");
     TH1F * tmp = (TH1F*)f->Get("13");
