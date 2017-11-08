@@ -98,13 +98,12 @@ void HistoManager::Book()
     analysisManager->SetH1Activation(ih, false);
   }
  
-  analysisManager->SetFirstNtupleId(1);
+  //analysisManager->SetFirstNtupleId(1);
   analysisManager->CreateNtuple("tree","tree");
-  analysisManager->CreateNtupleIColumn("process");
-  analysisManager->CreateNtupleIColumn("channel");
-  analysisManager->CreateNtupleIColumn("particle");
-  analysisManager->CreateNtupleDColumn("energy");
-  analysisManager->CreateNtupleIColumn("nucleus");
+  analysisManager->CreateNtupleIColumn("fChannel");
+  analysisManager->CreateNtupleDColumn("fQ");
+  analysisManager->CreateNtupleIColumn("fParticleVector",fParticleVector);
+  analysisManager->CreateNtupleDColumn("fEnergyVector",fEnergyVector);
   analysisManager->FinishNtuple();
 
 }

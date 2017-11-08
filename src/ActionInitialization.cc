@@ -33,6 +33,7 @@
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 #include "SteppingVerbose.hh"
+#include "HistoManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -58,13 +59,15 @@ void ActionInitialization::BuildForMaster() const
 
 void ActionInitialization::Build() const
 {
+  HistoManager * histo = new HistoManager();
+
   PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(fDetector);
   SetUserAction(primary);
     
   RunAction* runAction = new RunAction(fDetector, primary );
   SetUserAction(runAction);
   
-  SteppingAction* steppingAction = new SteppingAction();
+  SteppingAction* steppingAction = new SteppingAction(histo);
   SetUserAction(steppingAction);
 }  
 

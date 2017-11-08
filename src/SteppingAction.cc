@@ -43,7 +43,15 @@
 
 SteppingAction::SteppingAction()
 : G4UserSteppingAction()
-{ }
+{ 
+    fHistoManager = NULL;
+}
+
+SteppingAction::SteppingAction(HistoManager * histo)
+: G4UserSteppingAction()
+{
+    fHistoManager = histo;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -57,6 +65,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
  Run* run 
    = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
          
+  fHistoManager->Clear();
+
   // count processes
   // 
   const G4StepPoint* endPoint = aStep->GetPostStepPoint();
@@ -147,7 +157,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         nucleus = 1;
         if(name == "neutron")                       ih = 3;
         else if(name == "proton")                   ih = 4;
-        else if(name == "deuteron")                 ih = 6;
+        else if(name == "deuteron")                 ih = 5;
+        else if(name == "alpha")                    ih = 6;
         else if(name == "C12" || name == "C13")     ih = 10;
     }
     G4int processNumber;
@@ -156,17 +167,23 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     else if(hproc_name == "nCapture") processNumber = 2;
     else if(hproc_name == "nKiller") processNumber = 3;
     else processNumber = -1;
-    G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
-    analysis->FillNtupleIColumn(1,0,processNumber);
-    analysis->FillNtupleIColumn(1,1,channelNumber);
-    analysis->FillNtupleIColumn(1,2,ih);
-    analysis->FillNtupleDColumn(1,3,energy);
-    analysis->FillNtupleIColumn(1,4,nucleus);
-    analysis->AddNtupleRow(1);
+   
+    fHistoManager->PushBack(ih,energy);
+ 
+    //analysis->FillNtupleIColumn(1,0,processNumber);
+    //analysis->FillNtupleIColumn(1,1,channelNumber);
+    //analysis->FillNtupleIColumn(1,2,ih); // particle type identifier
+    //analysis->FillNtupleDColumn(1,3,energy);
+    //analysis->FillNtupleIColumn(1,4,nucleus);
 
     //if(type == "nucleus") G4cout << "nucleus = " << particle->GetParticleName() << G4endl;
 
   }
+    
+  G4int ch = run->GetNuclChannelNumber(nuclearChannel);
+  analysis->FillNtupleIColumn(0,ch);
+  analysis->FillNtupleDColumn(1,Q);
+  analysis->AddNtupleRow();
   
   
   if(fParticleFlag[G4Neutron::Neutron()] == 2 && fParticleFlag[G4Proton::Proton()] == 1) {
