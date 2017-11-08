@@ -59,8 +59,10 @@ class Run : public G4Run
     void ParticleCount(G4String, G4double);
     void Balance(G4double);
     void CountGamma(G4int);
+ 
     void RegisterProcessType(std::string,std::string);     
-   
+    int GetNuclChannelNumber(std::string channel); 
+  
     virtual void Merge(const G4Run*);      
     void EndOfRun(G4bool); 
    
@@ -101,7 +103,9 @@ class Run : public G4Run
          
     std::map<G4String,NuclChannel>  fNuclChannelMap;    
     std::map<G4String,ParticleData> fParticleDataMap;
+
     std::map<std::string,std::string> fNuclChannelProcNameMap;
+    std::map<std::string,G4int> fNuclChannelNumberMap;
     
     G4bool   fTargetXXX;                    
     G4double fPbalance[3];

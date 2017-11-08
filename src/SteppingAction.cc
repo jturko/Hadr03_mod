@@ -141,7 +141,33 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     Pbalance += momentum;
     //particle flag
     fParticleFlag[particle]++;
+   
+    int nucleus = 0;
+    if(type == "nucleus") {
+        nucleus = 1;
+        if(name == "neutron")                       ih = 3;
+        else if(name == "proton")                   ih = 4;
+        else if(name == "deuteron")                 ih = 6;
+        else if(name == "C12" || name == "C13")     ih = 10;
+    }
+    G4int processNumber;
+    if(hproc_name == "hadElastic") processNumber = 0;
+    else if(hproc_name == "neutronInelastic") processNumber = 1;
+    else if(hproc_name == "nCapture") processNumber = 2;
+    else if(hproc_name == "nKiller") processNumber = 3;
+    else processNumber = -1;
+    G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
+    analysis->FillNtupleIColumn(1,0,processNumber);
+    analysis->FillNtupleIColumn(1,1,channelNumber);
+    analysis->FillNtupleIColumn(1,2,ih);
+    analysis->FillNtupleDColumn(1,3,energy);
+    analysis->FillNtupleIColumn(1,4,nucleus);
+    analysis->AddNtupleRow(1);
+
+    //if(type == "nucleus") G4cout << "nucleus = " << particle->GetParticleName() << G4endl;
+
   }
+  
   
   if(fParticleFlag[G4Neutron::Neutron()] == 2 && fParticleFlag[G4Proton::Proton()] == 1) {
     analysis->FillH1(13,Q);
@@ -188,12 +214,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   }
   
   run->RegisterProcessType(nuclearChannel,hproc_name);
-  //std::map<G4String,G4String>::iterator it = run->GetNuclChannelProcNameMap().find(nuclearChannel);
-  //if(run->GetNuclChannelProcNameMap().find(nuclearChannel) == run->GetNuclChannelProcNameMap().end()) { 
-  //  G4cout << "nuclear channel = " << nuclearChannel << "\t process = " << hproc_name << G4endl;
-  //  run->GetNuclChannelProcNameMap()[nuclearChannel] = hproc_name;
-  //  run->GetNuclChannelProcNameMap().insert( std::pair<G4String,G4String>(nuclearChannel,hproc_name) );
-  //} 
 
   ///G4cout << "\n nuclear channel: " << nuclearChannel << G4endl;
   run->CountNuclearChannel(nuclearChannel, Q);

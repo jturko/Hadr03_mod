@@ -97,7 +97,16 @@ void HistoManager::Book()
     G4int ih = analysisManager->CreateH1(id[k], title[k], nbins, vmin, vmax);
     analysisManager->SetH1Activation(ih, false);
   }
-  //analysisManager->SetH1Activation(13,true);
+ 
+  analysisManager->SetFirstNtupleId(1);
+  analysisManager->CreateNtuple("tree","tree");
+  analysisManager->CreateNtupleIColumn("process");
+  analysisManager->CreateNtupleIColumn("channel");
+  analysisManager->CreateNtupleIColumn("particle");
+  analysisManager->CreateNtupleDColumn("energy");
+  analysisManager->CreateNtupleIColumn("nucleus");
+  analysisManager->FinishNtuple();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -68,6 +68,11 @@ void Run::RegisterProcessType(std::string pname, std::string ptype) {
   if(it == fNuclChannelProcNameMap.end()) fNuclChannelProcNameMap[pname] = ptype;
 }
 
+int Run::GetNuclChannelNumber(std::string channel) {
+  std::map<std::string,G4int>::iterator it = fNuclChannelNumberMap.find(channel);
+  return it->second;
+}
+
 
 
 void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
