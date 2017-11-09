@@ -205,6 +205,7 @@ void Run::Merge(const G4Run* run)
     }
   }
   // map: channel string to channel number (mine)
+  // THIS IS NOT WORKING WITH MULTITHREADED VERSION
   std::map<std::string,int>::const_iterator chit;
   for( chit  = localRun->fNuclChannelNumberMap.begin();
        chit != localRun->fNuclChannelNumberMap.end();
@@ -481,7 +482,7 @@ void Run::EndOfRun(G4bool print)
     int number = chit->second;
     G4cout << "(" << number << ") || " << name << std::endl;
   }
-  G4cout << " \n ========================================================================================== \n";
+  G4cout << " ========================================================================================== \n";
   
   //normalize histograms      
   ////G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
