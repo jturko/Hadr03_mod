@@ -156,17 +156,21 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     else if(hproc_name == "nCapture") processNumber = 2;
     else if(hproc_name == "nKiller") processNumber = 3;
     else processNumber = -1;
-    G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
-    analysis->FillNtupleIColumn(1,0,processNumber);
-    analysis->FillNtupleIColumn(1,1,channelNumber);
-    analysis->FillNtupleIColumn(1,2,ih);
-    analysis->FillNtupleDColumn(1,3,energy);
-    analysis->FillNtupleIColumn(1,4,nucleus);
-    analysis->AddNtupleRow(1);
+    //G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
+    //analysis->FillNtupleIColumn(1,0,processNumber);
+    //analysis->FillNtupleIColumn(1,1,channelNumber);
+    //analysis->FillNtupleIColumn(1,2,ih);
+    //analysis->FillNtupleDColumn(1,3,energy);
+    //analysis->FillNtupleIColumn(1,4,nucleus);
+    //analysis->AddNtupleRow(1);
 
     //if(type == "nucleus") G4cout << "nucleus = " << particle->GetParticleName() << G4endl;
 
   }
+  G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
+  analysis->FillNtupleIColumn(1,0,channelNumber); // nuclear channel number (should be idenfified when EndOfRunAction() does its thing
+  analysis->FillNtupleDColumn(1,1,Q); // Q value
+  analysis->AddNtupleRow(1);
   
   
   if(fParticleFlag[G4Neutron::Neutron()] == 2 && fParticleFlag[G4Proton::Proton()] == 1) {

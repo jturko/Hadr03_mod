@@ -100,11 +100,8 @@ void HistoManager::Book()
  
   analysisManager->SetFirstNtupleId(1);
   analysisManager->CreateNtuple("tree","tree");
-  analysisManager->CreateNtupleIColumn("process");
-  analysisManager->CreateNtupleIColumn("channel");
-  analysisManager->CreateNtupleIColumn("particle");
-  analysisManager->CreateNtupleDColumn("energy");
-  analysisManager->CreateNtupleIColumn("nucleus");
+  analysisManager->CreateNtupleIColumn("Channel");
+  analysisManager->CreateNtupleDColumn("Q");
   analysisManager->FinishNtuple();
 
 }
