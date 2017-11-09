@@ -52,7 +52,9 @@ class SteppingAction : public G4UserSteppingAction
    ~SteppingAction();
 
     virtual void UserSteppingAction(const G4Step*);
-    
+ 
+    int IdentifyParticle(std::string);
+   
   private:
     std::map<G4ParticleDefinition*,G4int> fParticleFlag;    
     HistoManager * fHistoManager;

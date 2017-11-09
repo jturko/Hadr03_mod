@@ -64,7 +64,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
  Run* run 
    = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
-         
+ 
+  fHistoManager->clear(); // clear the vectors in the histomanager
+        
   // count processes
   // 
   const G4StepPoint* endPoint = aStep->GetPostStepPoint();
@@ -115,8 +117,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     Pbalance += momentum;
     //
     nuclearChannel += partName + " + ";
-  }  
   
+    int pNumber = IdentifyParticle(partName);
+    fHistoManager->push_back(pNumber,energy);
+  }  
+ 
+  // for the ejectile ...
+
   //secondaries
   //
   const std::vector<const G4Track*>* secondary 
@@ -143,27 +150,30 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
       G4int A = particle->GetAtomicMass();
       analysis->FillH1(12, A);
     }
+    
     //energy-momentum balance
     G4ThreeVector momentum = (*secondary)[lp]->GetMomentum();
     Q        += energy;
     Pbalance += momentum;
     //particle flag
     fParticleFlag[particle]++;
-   
-    int nucleus = 0;
-    if(type == "nucleus") {
-        nucleus = 1;
-        if(name == "neutron")                       ih = 3;
-        else if(name == "proton")                   ih = 4;
-        else if(name == "deuteron")                 ih = 6;
-        else if(name == "C12" || name == "C13")     ih = 10;
-    }
-    G4int processNumber;
-    if(hproc_name == "hadElastic") processNumber = 0;
-    else if(hproc_name == "neutronInelastic") processNumber = 1;
-    else if(hproc_name == "nCapture") processNumber = 2;
-    else if(hproc_name == "nKiller") processNumber = 3;
-    else processNumber = -1;
+ 
+    int pNumber = IdentifyParticle(name);
+    fHistoManager->push_back(pNumber,energy);  
+    //int nucleus = 0;
+    //if(type == "nucleus") {
+    //    nucleus = 1;
+    //    if(name == "neutron")                       ih = 3;
+    //    else if(name == "proton")                   ih = 4;
+    //    else if(name == "deuteron")                 ih = 5;
+    //    else if(name == "C12" || name == "C13")     ih = 10;
+    //}
+    //G4int processNumber;
+    //if(hproc_name == "hadElastic") processNumber = 0;
+    //else if(hproc_name == "neutronInelastic") processNumber = 1;
+    //else if(hproc_name == "nCapture") processNumber = 2;
+    //else if(hproc_name == "nKiller") processNumber = 3;
+    //else processNumber = -1;
     //G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
     //analysis->FillNtupleIColumn(1,0,processNumber);
     //analysis->FillNtupleIColumn(1,1,channelNumber);
@@ -241,4 +251,16 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+int SteppingAction::IdentifyParticle(std::string name) {
+    int num = -1;
+    if(name == "gamma")         num = 2;
+    else if(name == "neutron")  num = 3;
+    else if(name == "proton")   num = 4;
+    else if(name == "deuteron") num = 5;
+    else if(name == "alpha")    num = 6;
+    else if(name == "C12" || name == "C13")     num = 7;
+    else if(name == "Be9" || name == "Be10")    num = 8;
+
+    return num;
+}
 
