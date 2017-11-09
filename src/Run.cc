@@ -79,7 +79,7 @@ int Run::GetNuclChannelNumber(std::string channel) {
     else {
         number = fNuclChannelNumberMap[channel];
     }    
-    if(this->GetNumberOfEvent() < 20) std::cout << "channel string = \"" << channel << "\" corresponding to channel number = " << number << std::endl;
+    //if(this->GetNumberOfEvent() < 20) std::cout << "channel string = \"" << channel << "\" corresponding to channel number = " << number << std::endl;
 
     return number;   
 }
@@ -203,7 +203,17 @@ void Run::Merge(const G4Run* run)
     if( fNuclChannelProcNameMap.find(pname) == fNuclChannelProcNameMap.end() ) {
       fNuclChannelProcNameMap[pname] = ptype;
     }
-
+  }
+  // map: channel string to channel number (mine)
+  std::map<std::string,int>::const_iterator chit;
+  for( chit  = localRun->fNuclChannelNumberMap.begin();
+       chit != localRun->fNuclChannelNumberMap.end();
+       chit++ ) {
+    std::string name = chit->first;
+    int number = chit->second;
+    if( fNuclChannelNumberMap.find(name) == fNuclChannelNumberMap.end() ) {
+      fNuclChannelNumberMap[name] = number;
+    }
   }
   
   //map: processes count
@@ -458,6 +468,20 @@ void Run::EndOfRun(G4bool print)
            << " --> " << G4BestUnit(fPbalance[2], "Energy")
            << ") \n" << G4endl;
  }
+  
+
+  // print out results of channel to integer map
+  G4cout << " \n ========================================================================================== \n";
+  G4cout << "Printing out map of channel name to number..." << G4endl;
+  std::map<std::string,int>::const_iterator chit;
+  for( chit  = fNuclChannelNumberMap.begin();
+       chit != fNuclChannelNumberMap.end();
+       chit++ ) {
+    std::string name = chit->first;
+    int number = chit->second;
+    G4cout << "(" << number << ") || " << name << std::endl;
+  }
+  G4cout << " \n ========================================================================================== \n";
   
   //normalize histograms      
   ////G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
