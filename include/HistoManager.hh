@@ -44,8 +44,19 @@
 class HistoManager
 {
   public:
-   HistoManager();
-  ~HistoManager();
+     HistoManager();
+    ~HistoManager();
+    
+    void push_back(int p, double e) {
+        fParticleVector.push_back(p);
+        fEnergyVector.push_back(e);
+    }
+    void clear() {
+        fParticleVector.clear();
+        fEnergyVector.clear();  
+    }
+    std::vector<int> fParticleVector;
+    std::vector<double> fEnergyVector;
 
   private:
     void Book();
