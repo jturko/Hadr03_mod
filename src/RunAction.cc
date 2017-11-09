@@ -57,6 +57,14 @@ RunAction::RunAction(DetectorConstruction* det, PrimaryGeneratorAction* prim)
  fRunMessenger = new RunMessenger(this);  
 }
 
+RunAction::RunAction(DetectorConstruction* det, PrimaryGeneratorAction* prim, HistoManager* histo)
+  : G4UserRunAction(),
+    fDetector(det), fPrimary(prim), fRun(0), fHistoManager(histo),
+    fRunMessenger(0), fPrint(true)    
+{
+ fRunMessenger = new RunMessenger(this);  
+}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RunAction::~RunAction()
