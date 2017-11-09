@@ -38,8 +38,6 @@
 #include "globals.hh"
 #include <map>
 
-#include "HistoManager.hh"
-
 class G4ParticleDefinition;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -48,14 +46,12 @@ class SteppingAction : public G4UserSteppingAction
 {
   public:
     SteppingAction();
-    SteppingAction(HistoManager * histo);
    ~SteppingAction();
 
     virtual void UserSteppingAction(const G4Step*);
     
   private:
     std::map<G4ParticleDefinition*,G4int> fParticleFlag;    
-    HistoManager * fHistoManager;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
