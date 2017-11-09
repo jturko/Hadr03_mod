@@ -102,6 +102,8 @@ void HistoManager::Book()
   analysisManager->CreateNtuple("tree","tree");
   analysisManager->CreateNtupleIColumn("Channel");
   analysisManager->CreateNtupleDColumn("Q");
+  analysisManager->CreateNtupleIColumn("ParticleVector",fParticleVector);
+  analysisManager->CreateNtupleDColumn("EnergyVector",fEnergyVector);
   analysisManager->FinishNtuple();
 
 }
