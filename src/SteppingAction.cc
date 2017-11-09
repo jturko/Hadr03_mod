@@ -167,10 +167,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     //if(type == "nucleus") G4cout << "nucleus = " << particle->GetParticleName() << G4endl;
 
   }
-  G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
-  analysis->FillNtupleIColumn(1,0,channelNumber); // nuclear channel number (should be idenfified when EndOfRunAction() does its thing
-  analysis->FillNtupleDColumn(1,1,Q); // Q value
-  analysis->AddNtupleRow(1);
   
   
   if(fParticleFlag[G4Neutron::Neutron()] == 2 && fParticleFlag[G4Proton::Proton()] == 1) {
@@ -223,7 +219,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   run->CountNuclearChannel(nuclearChannel, Q);
     
   fParticleFlag.clear();
-              
+  
+  // filling the tree
+  G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
+  analysis->FillNtupleIColumn(1,0,channelNumber); // nuclear channel number (should be idenfified when EndOfRunAction() does its thing
+  analysis->FillNtupleDColumn(1,1,Q); // Q value
+  analysis->AddNtupleRow(1);
+            
   // kill event after first interaction
   //
   G4RunManager::GetRunManager()->AbortEvent();  

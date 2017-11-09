@@ -69,11 +69,20 @@ void Run::RegisterProcessType(std::string pname, std::string ptype) {
 }
 
 int Run::GetNuclChannelNumber(std::string channel) {
-  std::map<std::string,G4int>::iterator it = fNuclChannelNumberMap.find(channel);
-  return it->second;
+    int number;
+    std::map<std::string,G4int>::iterator it = fNuclChannelNumberMap.find(channel);
+    if(it == fNuclChannelNumberMap.end()) {
+        int size = int(fNuclChannelNumberMap.size());
+        fNuclChannelNumberMap[channel] = size;
+        number = size;
+    }
+    else {
+        number = fNuclChannelNumberMap[channel];
+    }    
+    if(this->GetNumberOfEvent() < 20) std::cout << "channel string = \"" << channel << "\" corresponding to channel number = " << number << std::endl;
+
+    return number;   
 }
-
-
 
 void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
 { 

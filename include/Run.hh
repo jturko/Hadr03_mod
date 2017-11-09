@@ -62,7 +62,7 @@ class Run : public G4Run
  
     void RegisterProcessType(std::string,std::string);     
     int GetNuclChannelNumber(std::string channel); 
-  
+ 
     virtual void Merge(const G4Run*);      
     void EndOfRun(G4bool); 
    
