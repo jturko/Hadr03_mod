@@ -43,7 +43,15 @@
 
 SteppingAction::SteppingAction()
 : G4UserSteppingAction()
-{ }
+{ 
+    fHistoManager = NULL;    
+}
+
+SteppingAction::SteppingAction(HistoManager * histo) 
+: G4UserSteppingAction()
+{
+    fHistoManager = histo;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
