@@ -239,7 +239,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   fParticleFlag.clear();
   
   // filling the tree
-  G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
+  //G4int channelNumber = run->GetNuclChannelNumber(nuclearChannel);
+  G4int channelNumber = IdentifyChannel(nuclearChannel);
   analysis->FillNtupleIColumn(1,0,channelNumber); // nuclear channel number (should be idenfified when EndOfRunAction() does its thing
   analysis->FillNtupleDColumn(1,1,Q); // Q value
   analysis->AddNtupleRow(1);
@@ -260,6 +261,31 @@ int SteppingAction::IdentifyParticle(std::string name) {
     else if(name == "alpha")    num = 6;
     else if(name == "C12" || name == "C13")     num = 7;
     else if(name == "Be9" || name == "Be10")    num = 8;
+
+    return num;
+}
+
+int SteppingAction::IdentifyChannel(std::string channel) { // wow this is gross...
+    int num = -1;
+         if (channel == "neutron + H1 --> neutron + proton + 0 neutron")            num = 0; 
+    else if (channel == "neutron + H1 --> N gamma + 0 neutron + deuteron")          num = 1; 
+    else if (channel == "neutron + H2 --> neutron + 0 neutron + deuteron")          num = 2; 
+    else if (channel == "neutron + H2 --> proton + 2 neutron")                      num = 3;     
+    else if (channel == "neutron + H2 --> N gamma + proton + 2 neutron")            num = 4; 
+    else if (channel == "neutron + H2_isotope --> neutron + 0 neutron + deuteron")  num = 5;        
+    else if (channel == "neutron + H2_isotope --> proton + 2 neutron")              num = 6;            
+    else if (channel == "neutron + H2_isotope --> N gamma + proton + 2 neutron")    num = 7;         
+    else if (channel == "neutron + H2_isotope --> N gamma + 0 neutron + triton")    num = 8;    
+    else if (channel == "neutron + C12 --> neutron + 0 neutron + C12")              num = 9; 
+    else if (channel == "neutron + C12 --> N gamma + neutron + C12")                num = 10; 
+    else if (channel == "neutron + C12 --> 0 neutron + alpha + Be9")                num = 11;  
+    else if (channel == "neutron + C12 --> N gamma + 0 neutron + alpha + Be9")      num = 12; 
+    else if (channel == "neutron + C12 --> N gamma + 0 neutron + C13")              num = 13; 
+    else if (channel == "neutron + C13 --> neutron + 0 neutron + C13")              num = 14; 
+    else if (channel == "neutron + C13 --> N gamma + neutron + C13")                num = 15; 
+    else if (channel == "neutron + C13 --> 0 neutron + alpha + Be10")               num = 16; 
+    else if (channel == "neutron + C13 --> N gamma + 0 neutron + alpha + Be10")     num = 17; 
+    else if (channel == "neutron + C13 --> N gamma + 0 neutron + C14")              num = 18; 
 
     return num;
 }

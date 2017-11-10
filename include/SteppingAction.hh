@@ -54,6 +54,7 @@ class SteppingAction : public G4UserSteppingAction
     virtual void UserSteppingAction(const G4Step*);
  
     int IdentifyParticle(std::string);
+    int IdentifyChannel(std::string);
    
   private:
     std::map<G4ParticleDefinition*,G4int> fParticleFlag;    
