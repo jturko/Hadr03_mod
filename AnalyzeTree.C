@@ -18,10 +18,16 @@ void AnalyzeTree(double En = 10.)
     tree->SetBranchAddress("ParticleVector",&pVector);
     tree->SetBranchAddress("EnergyVector",&eVector);
 
-    TH1F * h6 = new TH1F("h6","h6",3000,-10,20);
-    TH1F * h7 = new TH1F("h7","h7",3000,-10,20);
-    TH1F * h7_gamma = new TH1F("h7_gamma","h7_gamma",3000,-10,20);
-    TH2F * ch_q = new TH2F("ch_q","ch_q",21,-1,20,3000,-10,20);
+    int nChannels = 19;
+    TH1F ** h = (TH1F**)malloc(nChannels*sizeof(TH1F*));
+    TH1F ** h_gamma = (TH1F**)malloc(nChannels*sizeof(TH1F*));
+    for(int i=0; i<nChannels; ++i) {
+        h[i] = new TH1F(Form("h%d",i),Form("h%d",i),4000,-20,20);
+        h_gamma[i] = new TH1F(Form("h%d_gamma",i),Form("h%d_gamma",i),4000,-20,20);
+    }
+
+    TH2F * ch_q = new TH2F("ch_q","ch_q",21,-1,20,4000,-20,20);
+    TH2F * ch_q_gamma = new TH2F("ch_q_gamma","ch_q_gamma",21,-1,20,4000,-20,20);
 
     int size;
     double val, val2;
@@ -34,15 +40,11 @@ void AnalyzeTree(double En = 10.)
         for(int j=0; j<size; ++j) {
             if(pVector->at(j) != 2) val += eVector->at(j);
             val2 += eVector->at(j);
-        }    
-        if(channel == 6) {
-            h6->Fill(val);
         }
-        if(channel == 7) { 
-            h7->Fill(val);
-            h7_gamma->Fill(val2);
-        }
-        ch_q->Fill(channel,Q);
+        h[channel]->Fill(val2);
+        h_gamma[channel]->Fill(val);
+        ch_q->Fill(channel,val2);
+        ch_q_gamma->Fill(channel,val);
     }
     std::cout << std::endl;
 
